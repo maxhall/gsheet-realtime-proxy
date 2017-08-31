@@ -6,9 +6,7 @@ const winston = require('winston')
 const sheetsy = require('sheetsy');
 const { urlToKey, getWorkbook, getSheet } = sheetsy;
 
-// TODO: Add defaults or catches for if none are set
 const sheetURL = process.env.GSHEET_URL;
-// Will refresh data from the spreadsheet every 30 seconds if not told otherwise
 const defaultRefreshInterval = 30000;
 const refreshInterval = Number(process.env.REFRESH_INTERVAL) || defaultRefreshInterval;
 
@@ -35,7 +33,6 @@ const getSheetData = async function getSheetData(sheetKey) {
   }
 }
 
-// Cleans up the data
 // TODO: Actually clean it
 const cleanSheetData = async function(data) {
   return data;

@@ -16,7 +16,6 @@
     "fast-deep-equal": "^1.0.0",
     "sheetsy": "^2.1.1",
     "socket.io": "^2.0.3",
-    "tabletop": "^1.5.2",
     "winston": "^2.3.1"
   }
 }

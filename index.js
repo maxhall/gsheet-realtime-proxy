@@ -1,7 +1,8 @@
-var app = require('express')();
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
-var deepEqual = require('fast-deep-equal');
+const app = require('express')();
+const http = require('http').Server(app);
+const io = require('socket.io')(http);
+const deepEqual = require('fast-deep-equal');
+const winston = require('winston')
 const sheetsy = require('sheetsy');
 const { urlToKey, getWorkbook, getSheet } = sheetsy;
 
@@ -24,14 +25,13 @@ const getSheetData = async function getSheetData(sheetKey) {
     // aggregatedData becomes an array of promises because it's async
     // which is necessary to call the async getSheet function within it
     const aggregatedData = sheetIds.map(async (sheetId) => {
-      console.log(sheetKey);
       const sheetData = await getSheet(sheetKey, sheetId);
       return sheetData;
     })
 
     return Promise.all(aggregatedData)
   } catch (e) {
-    console.log(e);
+    winston.log('error', e);
   }
 }
 
@@ -44,7 +44,7 @@ const cleanSheetData = async function(data) {
 // Push results to clients
 const pushDataToClient = function pushDataToClient(data) {
   io.emit('data', data);
-  console.log('Pushed to client.');
+  winston.log('info', 'Pushed to client');
 };
 
 const getAndPushData = async function getAndPushData(sheetKey) {
@@ -55,15 +55,16 @@ const getAndPushData = async function getAndPushData(sheetKey) {
     // TODO: Fix the weird double negative here
     const dataUnchanged = deepEqual(oldData, cleanData);
     if (!dataUnchanged) {
-      console.log('Data changed.');
+      winston.log('info', 'Data changed');
       pushDataToClient(cleanData);
       oldData = cleanData;
     } else {
-      console.log('Data unchanged.');
+      winston.log('info', 'Data unchanged');
       return;
     }
   } catch (e) {
-    throw (e);
+    // TODO: Is it better to throw here?
+    winston.log('error', e);
   }
 }
 

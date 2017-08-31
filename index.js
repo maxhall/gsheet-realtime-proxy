@@ -1,7 +1,6 @@
 var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
-var tabletop = require('Tabletop');
 var deepEqual = require('fast-deep-equal');
 const sheetsy = require('sheetsy');
 const { urlToKey, getWorkbook, getSheet } = sheetsy;
@@ -11,6 +10,8 @@ const { urlToKey, getWorkbook, getSheet } = sheetsy;
 const sheetURL = process.env.GSHEET_URL;
 const refreshInterval = Number(process.env.REFRESH_INTERVAL);
 const sheetKey = urlToKey(sheetURL);
+
+var oldData = {};
 
 // Returns a promise for all the data from the spreadsheet
 const getSheetData = async function getSheetData(sheetKey) {
@@ -25,7 +26,7 @@ const getSheetData = async function getSheetData(sheetKey) {
     // which is necessary to call the async getSheet function within it
     const aggregatedData = sheetIds.map(async (sheetId) => {
       const sheetData = await getSheet(sheetKey, sheetId);
-      return sheetData.name;
+      return sheetData;
     })
 
     // Processes the array of promises
@@ -41,32 +42,44 @@ const cleanSheetData = async function(data) {
   return data;
 };
 
-// Accepts two objects, compares them, returns true if they've changed
-const hasDataChanged = function hasDataChanged(oldData, newData) {
-  if (deepEqual(oldData, newData)) {
-    console.log('Checked data: it has changed.');
-    return true;
-  } else {
-    console.log('Checked data: it did not change.');
-    return false;
-  }
+// Push results to clients
+const pushDataToClient = function pushDataToClient(data) {
+  io.emit('data', data);
+  console.log('Pushed to client.');
 };
 
 // TODO: Flesh  this out so that it runs the whole sequence
-const runLoop = async function runLoop() {
-  const newData = await getSheetData(sheetKey);
-  console.log(newData);
+const getAndPushData = async function getAndPushData() {
+  try {
+    const newData = await getSheetData(sheetKey);
+    const cleanData = await cleanSheetData(newData);
+    // Everything works up until this point
+    // TODO: Fix the weird double negative here
+    const dataUnchanged = deepEqual(oldData, cleanData);
+    if (!dataUnchanged) {
+      console.log('Data changed.');
+      pushDataToClient(cleanData);
+      oldData = cleanData;
+    } else {
+      console.log('Data unchanged.');
+      return;
+    }
+  } catch (e) {
+    console.log('helllll yea');
+  }
 }
 
 // This effectively does it every refreshInterval
 setInterval(() => {
-  runLoop();
+  getAndPushData();
 }, refreshInterval)
 
-// Push results to clients
-const pushDataToClient = function pushDataToClient(data) {
-  io.emit('data', data);
-};
+// Push data to any newly connected users
+// TODO: check whether this pushes to all connections or just the newly
+// connected one
+io.on('connection', function(socket){
+  pushDataToClient();
+});
 
 // Return 404 for all requests to the server
 app.get('/', (req, res) => {

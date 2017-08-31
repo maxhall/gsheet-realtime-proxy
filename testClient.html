@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Test page</title>
+  </head>
+  <body>
+    <h1>Test</h1>
+    <p>Open the console.</p>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
+    <script>
+      var socket = io('localhost:3000');
+      socket.on('data', function(msg){
+        console.log(msg);
+      });
+    </script>
+  </body>
+</html>

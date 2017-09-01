@@ -8,11 +8,27 @@ There are two ways of deploying this project. Which you choose depends on what s
 
 ## Simple deployment: straight to Heroku
 
-1. Hit this "[DEPLOY TO HEROKU TEXT]" button. If you don't have a Heroku account, sign up now.
+1. I'm assuming you have a spreadsheet of data you want to use. Follow the guidelines [here](https://github.com/TehShrike/sheetsy#how-to-set-up-your-google-spreadsheet) about setting up your spreadsheet and getting the public URL we will need.
 
-2. This app only has two options we set using Heroku environment variables: the URL of the Google sheet with your source data and how frequently the server should fetch data from it.
+2. Hit this "Deploy to Heroku" button.
 
-## Deploying with modification
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+
+3. Sign in to your Heroku account or follow the prompts to make one. You will be taken to a screen that looks like this:
+
+[![Heroku 'Create new app' screen](heroku-deployment.png)]
+
+4. Give your app a name and pick a region to host it from the available options. Then all that's left to do is set the only two options we will need: the URL of the Google sheet with your source data and how frequently the server should fetch data from it, measured in milliseconds. Be careful not to go too low for the Refresh Interval. Google is known to arbitrarily block people polling their servers too much.
+
+5. Press "Deploy app". Watch it build the app. Check the logs in Heroku's management dashboard. If you're URL doesn't seem to be working, follow [these steps](https://github.com/jsoma/tabletop#if-your-publish-to-web-url-doesnt-work).
+
+6. That should be it. Make sure to point you socket.io client to the server when you work on that. This will usually look something like `var socket = io('https://test-streaming-server.herokuapp.com/');`. The testClient.html file in this repository has a minimal client for testing purposes you might want to play with.
+
+### Running costs
+
+Heroku gives you 550 free server hours a month for free, and an additional 450 if you register with a credit card. That should be plenty for most projects using this.
+
+## Deploying with modification (draft)
 
 This can be deployed anywhere you can run a Node app, but is particularly easy to get working with Heroku.
 
@@ -34,8 +50,6 @@ $ npm install
 
 The server no interface. We set two options—the URL of the Google sheet with your source data and how frequently the server should fetch data from it—using environment variables.
 
-
-
 3. Clean up your data
 
 The Javascript object Tabletop pulls from you Google Sheet will contains a fairly large amount of useless data. You should only send data you actually need to the client, so we define a `processData` function that takes the full Google Sheet object as an argument and returns a clean Javascript object of the data you want to reach the client with whichever structure makes your life easiest.
@@ -43,8 +57,6 @@ The Javascript object Tabletop pulls from you Google Sheet will contains a fairl
 The function's default behaviour returns an object containing one object for each sheet of the source Google Sheet. If this isn't the behaviour you want, edit the function.
 
 4. Deploying to Heroku
-
-## Deploying straight to Heroku
 
 ## Client
 

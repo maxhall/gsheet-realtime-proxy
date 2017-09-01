@@ -1,6 +1,6 @@
 {
   "name": "gSheet Realtime Proxy",
-  "description": "A simple-as-possible Node server that pushes data from a Google Sheet in almost real time",
+  "description": "A simple-as-possible Node server that pushes data from a Google Sheet in almost real time.",
   "repository": "https://github.com/maxhall/gsheet-realtime-proxy",
   "env": {
     "GSHEET_URL": {
@@ -8,7 +8,7 @@
       "default": ""
     },
     "REFRESH_INTERVAL": {
-      "description": "How frequently the server checks the Google Sheet for updates, in milliseconds.",
+      "description": "How frequently the server checks the Google Sheet for updates, in milliseconds. The default is 30000 (30 seconds). Probably don't go lower to avoid spamming Google's servers.",
       "default": "30000"
     }
   }

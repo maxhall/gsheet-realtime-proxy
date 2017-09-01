@@ -1,0 +1,15 @@
+{
+  "name": "gSheet Realtime Proxy",
+  "description": "A simple-as-possible Node server that pushes data from a Google Sheet in almost real time",
+  "repository": "https://github.com/maxhall/gsheet-realtime-proxy",
+  "env": {
+    "GSHEET_URL": {
+      "description": "The public sharing URL of the Google Sheet containing your data.",
+      "default": ""
+    },
+    "REFRESH_INTERVAL": {
+      "description": "How frequently the server checks the Google Sheet for updates, in milliseconds.",
+      "default": "30000"
+    }
+  }
+}

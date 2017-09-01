@@ -1,6 +1,6 @@
 # Tiny gSheet real-time proxy
 
-A simple-as-possible [Node](#) server that uses [Tabletop](#) and [Socket.io](#) to push data from a Google Sheet in almost real time.
+A simple-as-possible [Node](#) server that uses [Sheetsy](#) and [Socket.io](#) to push data from a Google Sheet in almost real time.
 
 This project was created for [Honi Soit's 2017 election coverage](#).
 
@@ -11,7 +11,6 @@ There are two ways of deploying this project. Which you choose depends on what s
 1. Hit this "[DEPLOY TO HEROKU TEXT]" button. If you don't have a Heroku account, sign up now.
 
 2. This app only has two options we set using Heroku environment variables: the URL of the Google sheet with your source data and how frequently the server should fetch data from it.
-
 
 ## Deploying with modification
 

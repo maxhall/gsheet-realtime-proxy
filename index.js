@@ -12,6 +12,8 @@ const refreshInterval = Number(process.env.REFRESH_INTERVAL) || defaultRefreshIn
 
 var oldData = {};
 
+app.set('port', (process.env.PORT || 5000));
+
 const getSheetData = async function getSheetData(sheetKey) {
   try {
     const workbookObject = await getWorkbook(sheetKey);
@@ -85,6 +87,6 @@ app.get('/', (req, res) => {
 })
 
 // Start the server
-http.listen(3000, () => {
-  console.log('listening on *:3000');
+http.listen(app.get('port'), () => {
+  winston.log('info', 'App started.')
 });

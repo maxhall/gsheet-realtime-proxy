@@ -12,7 +12,7 @@ const refreshInterval = Number(process.env.REFRESH_INTERVAL) || defaultRefreshIn
 
 var oldData = {};
 
-app.set('port', (process.env.PORT || 5000));
+app.set('port', (process.env.PORT || 3000));
 
 const getSheetData = async function getSheetData(sheetKey) {
   try {
@@ -29,15 +29,46 @@ const getSheetData = async function getSheetData(sheetKey) {
       return sheetData;
     })
 
+    // We then use Promise.all to return when all the child promises have resolved
     return Promise.all(aggregatedData)
   } catch (e) {
     winston.log('error', e);
   }
 }
 
-// TODO: Actually clean it
 const cleanSheetData = async function(data) {
-  return data;
+  //Return an object with individual sheet data keyed to their name
+  const cleanData = data.reduce((object, sheet) => {
+
+    const headerRow = sheet.rows[0];
+    // This array should include only the gSheet column names...
+    const sheetColumnNames = Object.keys(headerRow);
+    // ...but, for reasons I don't understand there's twice the number of keys
+    // needed so we find the length of the array and shave the first half off
+    const relevantLength = sheetColumnNames.length / 2;
+    const trueColumnNames = sheetColumnNames.slice(relevantLength);
+
+    // Now reduce through the rows to create an array of row objects
+    const rowArray = sheet.rows;
+    const restructuredRows = rowArray.reduce((object, row, index) => {
+
+      // Create an object for each row where the
+      // values are keyed to column headers
+      const keyedRow = row.reduce((object, cell, index) => {
+        const columnNameFromIndex = trueColumnNames[index];
+        object[columnNameFromIndex] = cell;
+        return object;
+      }, {});
+
+      object.push(keyedRow);
+      return object;
+    }, []);
+
+    object[sheet.name] = restructuredRows;
+    return object;
+  }, {});
+
+  return cleanData;
 };
 
 // Push results to clients
@@ -62,7 +93,6 @@ const getAndPushData = async function getAndPushData(sheetKey) {
       return;
     }
   } catch (e) {
-    // TODO: Is it better to throw here?
     winston.log('error', e);
   }
 }
@@ -78,7 +108,8 @@ setInterval(() => {
 
 // TODO: check whether this pushes to all connections or just the new one
 io.on('connection', function(socket){
-  pushDataToClient();
+  winston.log('info', 'client connected')
+  pushDataToClient(oldData);
 });
 
 // Return 404 for all requests to the server

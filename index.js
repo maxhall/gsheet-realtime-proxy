@@ -106,7 +106,7 @@ setInterval(() => {
   };
 }, refreshInterval)
 
-// TODO: check whether this pushes to all connections or just the new one
+// Push data to newly connected users
 io.on('connection', function(socket){
   socket.emit('data', oldData);
   winston.log('info', 'Client connected, data pushed')

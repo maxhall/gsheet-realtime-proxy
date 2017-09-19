@@ -9,7 +9,7 @@
     <p>Open the console.</p>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
     <script>
-      var socket = io('localhost:3000');
+      var socket = io('https://your-server-name.herokuapp.com/');
       socket.on('data', function(msg){
         console.log(msg);
       });

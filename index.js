@@ -108,8 +108,8 @@ setInterval(() => {
 
 // TODO: check whether this pushes to all connections or just the new one
 io.on('connection', function(socket){
-  winston.log('info', 'client connected')
-  pushDataToClient(oldData);
+  socket.emit('data', oldData);
+  winston.log('info', 'Client connected, data pushed')
 });
 
 // Return 404 for all requests to the server

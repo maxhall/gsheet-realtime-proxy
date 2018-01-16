@@ -2,7 +2,7 @@
 
 A simple-as-possible [Node](https://nodejs.org/en/) server that uses [Sheetsy](https://github.com/TehShrike/sheetsy) and [Socket.io](https://socket.io/) to push data from a Google Sheet in very nearly real time.
 
-This project was created for [Honi Soit's 2017 election coverage](honisoit.com/2017/09/src-2017-live/).
+This project was created for [Honi Soit's 2017 election coverage](http://honisoit.com/2017/09/src-2017-live/).
 
 There are two ways of deploying this project. Which you choose depends on what structure you want your spreadsheet data to have when it reaches your client. By default the server sends a Javascript object containing one object for each sheet of the source Google Sheet. If you're okay with this, follow the simple deployment steps. Otherwise you will want to modify the source before deploying and you should follow the more involved custom deployment.
 
